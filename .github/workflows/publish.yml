@@ -1,0 +1,55 @@
+name: Build and Publish Java 21 Image
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build JAR with Maven
+        run: mvn -B clean package
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ghcr.io/nsdev-code/test-ghcr-publish:latest
+            ghcr.io/nsdev-code/test-ghcr-publish:sha-${{ github.sha }}
+          provenance: true
+          sbom: true
+
+
+tags: |
+  ghcr.io/${{ github.repository_owner }}/test-ghcr-publish:latest
+  ghcr.io/${{ github.repository_owner }}/test-ghcr-publish:sha-${{ github.sha }}

@@ -1,0 +1,7 @@
+services:
+  app:
+    image: ghcr.io/nsdev-code/test-ghcr-publish:latest
+    container_name: test-ghcr-publish
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
