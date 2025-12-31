@@ -14,6 +14,21 @@ java {
 	}
 }
 
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -35,3 +50,4 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
